@@ -6,6 +6,7 @@ from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 
 from utils.constants import districts, ACCEPT_BUTTON, type_org_mapping
 
@@ -13,7 +14,9 @@ class LinksCollector:
 
     def __init__(self,
                  driver,
-                 link='https://yandex.ru/maps',
+                 #link='https://yandex.ru/maps/47/nizhny-novgorod/search/Кафе/',
+                 link='https://yandex.ru/maps/47/nizhny-novgorod/search/vkusno_i_tochka/',
+                 #link='https://yandex.ru/maps/10335/tashkent/search/TOK%20BOR/',
                  max_errors=5,
                  accept_button=ACCEPT_BUTTON,
                  accept=False):
@@ -31,12 +34,14 @@ class LinksCollector:
     def _open_page(self, request):
         self.driver.get(self.link)
         sleep(random.uniform(1, 2))
-        self.driver.find_element_by_class_name(name='search-form-view__input').send_keys(request)
-        sleep(random.uniform(0.4, 0.7))
-        self.driver.find_element_by_class_name(name='small-search-form-view__button').click()
+        #self.driver.find_element(By.CLASS_NAME,'search-form-view__input').click()#send_keys(request)
+        #sleep(random.uniform(0.4, 2))
+        #self.driver.find_element(By.CLASS_NAME,'input _focused _empty _view_search _size_medium').send_keys(request)
+        #sleep(random.uniform(0.4, 0.7))
+        #self.driver.find_element(By.CLASS_NAME,'small-search-form-view__button').click()
         # Нажимаем на кнопку поиска
         sleep(random.uniform(1.4, 2))
-        self.slider = self.driver.find_element_by_class_name(name='scroll__scrollbar-thumb')
+        self.slider = self.driver.find_element(By.CLASS_NAME,'scroll__scrollbar-thumb')
 
         if self.accept:
         # Соглашение куки
@@ -46,7 +51,7 @@ class LinksCollector:
                 try:
                     count += 1
                     sleep(3)
-                    self.driver.find_element_by_xpath(self.accept_button).click()
+                    self.driver.find_element(By.XPATH, self.accept_button).click()
                     flag = False
                 except:
                     if count > 5:
@@ -68,7 +73,7 @@ class LinksCollector:
         while self.max_errors > errors:
             try:
                 ActionChains(self.driver).click_and_hold(self.slider).move_by_offset(0, int(100/errors)).release().perform()
-                slider_organizations_hrefs = self.driver.find_elements_by_class_name(name='search-snippet-view__link-overlay')
+                slider_organizations_hrefs = self.driver.find_elements(By.CLASS_NAME, 'search-snippet-view__link-overlay')
                 slider_organizations_hrefs = [href.get_attribute("href") for href in slider_organizations_hrefs]
                 organizations_hrefs = list(set(organizations_hrefs + slider_organizations_hrefs))
                 count += 1
@@ -98,10 +103,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     type_org = args.type_org
 
-    for type_org in ['build']:
+    for type_org in ['MCD']:
         for district in ['Алания']:
             sleep(1)
-            driver = webdriver.Safari()
+            driver = webdriver.Chrome()
             grabber = LinksCollector(driver)
-            grabber.run(city="Турция", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
+            grabber.run(city="Нижний Новгород", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
 

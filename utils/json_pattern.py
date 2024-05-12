@@ -12,7 +12,8 @@ def into_json(org_id, name, address, website, opening_hours, ypage, goods, ratin
         opening_hours_new.append(day[:2].lower())
     for i in days:
         if i not in opening_hours_new:
-            opening_hours.insert(days.index(i), '   выходной')
+            if opening_hours != "Без часов работы":
+                opening_hours.insert(days.index(i), '   выходной')
 
     data_grabbed = {
         "ID": org_id,

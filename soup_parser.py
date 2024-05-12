@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import NoSuchElementException, MoveTargetOutOfBoundsException
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 
 
 class SoupContentParser(object):
@@ -99,7 +100,7 @@ class SoupContentParser(object):
 
     def get_reviews(self, soup_content, driver):
         reviews = []
-        slider = driver.find_element_by_class_name(name='scroll__scrollbar-thumb')
+        slider = driver.find_element(By.CLASS_NAME,'scroll__scrollbar-thumb')
         try:
             reviews_count = int(soup_content.find_all("div", {"class": "tabs-select-view__counter"})[-1].text)
         except ValueError:

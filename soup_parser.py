@@ -2,45 +2,80 @@ from bs4 import BeautifulSoup
 from selenium.common.exceptions import NoSuchElementException, MoveTargetOutOfBoundsException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+import re
 
 
 class SoupContentParser(object):
 
     def get_name(self, soup_content):
+        name = ""
         try:
-            for data in soup_content.find_all("h1", {"class": "orgpage-header-view__header"}):
-                name = data.getText()
-            return name
-        except Exception:
+            # Попытка найти имя с первым классом
+            name_element = soup_content.find("h1", {"class": "orgpage-header-view__header"})
+            if not name_element:  # Если элемент не найден, попробуйте другой класс
+                name_element = soup_content.find("h1", {"class": "_tvxwjf"})  
+            if name_element:
+                name = name_element.getText().strip()
+        except Exception as e:
+            print(f"Ошибка при извлечении имени: {e}")
             return ""
+
+        return name
 
     def get_phone(self, soup_content):
+        phones = []
         try:
-            phones = []
             for data in soup_content.find_all("div", {"class": "card-phones-view__number"}):
-                phone = data.getText()
-                phones.append(phone)
-            return phones
-        except Exception:
-            return []
+                phone = data.getText().strip()
+                if phone:  # Проверка наличия номера телефона
+                    phones.append(phone)
+            for data in soup_content.find_all("div", {"class": "_b0ke8"}):
+                link = data.find('a')
+                if link:
+                    phone = link.get('href')
+                    if phone:  # Проверка наличия ссылки
+                        phones.append(phone)
+        except Exception as e:
+            print(f"Ошибка при извлечении телефонных номеров: {e}")
+            return []  # Возвращаем пустой список в случае ошибки
+        return phones
 
     def get_social(self, soup_content):
+        socials = []
         try:
-            socials = []
             for data in soup_content.find_all("a", {"class": "button _view_secondary-gray _ui _size_medium _link"}):
-                social = data['href']
-                socials.append(social)
-            return socials
-        except Exception:
-            return []
+                href = data.get('href')
+                if href:  # Проверка наличия ссылки
+                    socials.append(href)
+            for data in soup_content.find_all("div", {"class": "_14uxmys"}):
+                link = data.find('a')
+                if link and link.get('href'):  # Проверка наличия элемента и ссылки
+                    socials.append(link.get('href'))
+        except Exception as e:
+            print(f"Ошибка при извлечении социальных ссылок: {e}")
+            return []  # Возвращаем пустой список в случае ошибки
+
+        return socials
 
     def get_address(self, soup_content):
+        addresses = []  # Инициализация списка для хранения всех адресов
         try:
+            # Поиск и добавление адресов из тегов <a> с классом "business-contacts-view__address-link"
             for data in soup_content.find_all("a", {"class": "business-contacts-view__address-link"}):
-                address = data.getText()
-            return address
-        except Exception:
-            return ""
+                if data.getText().strip():  # Добавляем только непустые строки
+                    addresses.append(data.getText().strip())
+            # Поиск и добавление адресов из тегов <span> с классом "_er2xx9"
+            for data in soup_content.find_all("span", {"class": "_er2xx9"}):
+                links = data.find_all('a', {"class": "_2lcm958"})
+                for link in links:
+                    if link.getText().strip():  # Добавляем только непустые строки
+                        addresses.append(link.getText().strip())
+        except Exception as e:
+            print(f"Произошла ошибка при обработке адресов: {e}")
+            return ""  # Возвращаем пустую строку в случае ошибки
+        # Преобразование списка адресов в одну строку, разделенную запятыми
+        address_string = ', '.join(addresses)
+        return address_string
 
     def get_website(self, soup_content):
         try:
@@ -93,6 +128,8 @@ class SoupContentParser(object):
         rating = ""
         try:
             for data in soup_content.find_all("span", {"class": "business-summary-rating-badge-view__rating-text"}):
+                rating += data.getText()
+            for data in soup_content.find_all("div", {"class": "_y10azs"}):
                 rating += data.getText()
             return rating
         except Exception:

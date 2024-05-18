@@ -36,12 +36,14 @@ class Parser:
                 soup = BeautifulSoup(self.driver.page_source, "lxml")
                 org_id += 1
                 print(org_id)
-                print(type(org_id))
+                #print(type(org_id))
                 name = self.soup_parser.get_name(soup)
                 if name == "":
                     name = "Без названия"
                 address = self.soup_parser.get_address(soup)
                 if address == "":
+                    print(address)
+                    print(type(address))
                     address = "Без адреса"
                 website = self.soup_parser.get_website(soup)
                 if website == "":
@@ -52,7 +54,7 @@ class Parser:
                 ypage = self.driver.current_url
                 rating = self.soup_parser.get_rating(soup)
                 if rating == "":
-                    rating = "Без рейтинга"
+                    frating = "Без рейтинга"
                 else:
                     rating = rating.replace(',', '.')
                     frating = float(rating)

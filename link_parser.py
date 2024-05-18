@@ -15,7 +15,8 @@ class LinksCollector:
     def __init__(self,
                  driver,
                  #link='https://yandex.ru/maps/47/nizhny-novgorod/search/Кафе/',
-                 link='https://yandex.ru/maps/47/nizhny-novgorod/search/vkusno_i_tochka/',
+                 #link='https://yandex.ru/maps/47/nizhny-novgorod/search/vkusno_i_tochka/',
+                 link='https://yandex.ru/maps/org/tok_bor/34602879882/?ll=88.237472%2C36.568632&mode=search&sctx=ZAAAAAgBEAAaKAoSCQiPNo5Y4FhAEUsgJXZt2U5AEhIJIeS8%2Fw91cUARzt2ul6ZLV0AiBgABAgMEBSgKOABAkE5IAWoCcnWdAc3MTD2gAQCoAQC9AeUalYLCAZQBipf484ABjZqR9IQGudGt6G23%2Fuir%2FQOPt%2FWH8wHt%2FdjS6wO26M%2BAxQaq2resjwa38%2FnJ1gHBrMfUoQGD5q3xjgfcqMXE9QHg4bb98wHYmqeFhgSi1JSmlQTFkciv%2BwOV8N2x6wG%2Fx%2BfI7wOBxrvDuwOOxPurLsmTy9PHBqCFmMj0Bv%2FJt%2Br3Bcfnl%2BbQBc2S7MP1AYICB1RPSyBCT1KKAgCSAgCaAgxkZXNrdG9wLW1hcHOwAgE%3D&sll=88.237472%2C36.568632&sspn=136.870766%2C86.480799&text=TOK%20BOR&z=3.63',
                  #link='https://yandex.ru/maps/10335/tashkent/search/TOK%20BOR/',
                  max_errors=5,
                  accept_button=ACCEPT_BUTTON,
@@ -103,10 +104,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     type_org = args.type_org
 
-    for type_org in ['MCD']:
+    for type_org in ['charge']:
         for district in ['Алания']:
             sleep(1)
             driver = webdriver.Chrome()
             grabber = LinksCollector(driver)
-            grabber.run(city="Нижний Новгород", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
+            grabber.run(city="Узбекистан", district=district, type_org_ru=type_org_mapping[type_org], type_org=type_org)
 
